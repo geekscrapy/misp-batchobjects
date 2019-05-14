@@ -56,7 +56,7 @@ if __name__ == '__main__':
     objects = []
     for csvfile in args.csv:
         objects_file = csv.DictReader(
-            open(csvfile),
+            open(os.path.abspath(csvfile)),
             delimiter=args.delim,
             quotechar=args.quotechar,
             strict=args.strictcsv
@@ -137,3 +137,5 @@ if __name__ == '__main__':
                 log.critical('Error in MISP response! Exiting!')
                 log.critical(response['errors'])
                 exit(1)
+
+            print('Event: {}/events/view/{}'.format(secrets.misp_url, response['response']['Event']['id']))
