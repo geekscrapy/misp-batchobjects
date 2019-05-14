@@ -5,8 +5,8 @@ Currently, you cannot batch create objects to be added to a MISP Event. This pro
 Objects and their fields are defined within CSV files and provided to the script which creates the associated Object in MISP.
 
 * CSV files MUST contain headers, each of these headers relates to the Objects object-relation field.
-* There MUST be an "object" column
-* If the object allows it, multiple fields of the same type can be added by appending __1, __2, __3 etc. to the column header. The script strips these and adds these Attributes individually
+* There MUST be an "object" column - this identifies the creating object
+* If the object allows it, multiple fields of the same type can be added by appending __1, __2, __3 etc. to the column header. The script strips these suffixes and adds these Attributes individually
 * Fields can be in any order
 * If the field name is the same across Objects, just use the same column
 
@@ -26,6 +26,10 @@ Multiple objects can be included in the same CSV:
 To show the Objects before uploading to MISP, use --dryrun:
 
 ```python batch_objects.py --dryrun -c wanacry_example.csv -i "WanaCry Example"```
+
+# all.csv
+This file contains column headers for ALL objects in the 2.4.103 release of MISP
+To generate a CSV file of the updated object fields use ```gen_def_csv.sh```
 
 # --help
 ```
