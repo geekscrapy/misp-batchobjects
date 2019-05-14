@@ -27,7 +27,9 @@ To show the Objects before uploading to MISP, use --dryrun:
 
 ```python batch_objects.py --dryrun -c wanacry_example.csv -i "WanaCry Example"```
 
-To generate a CSV file with ALL the objects fields as headers, use ``` 	gen_def_csv.sh```
+# all.csv
+This file contains column headers for ALL objects in the 2.4.103 release of MISP
+To generate a CSV file of the updated object fields use ```gen_def_csv.sh```
 
 # --help
 ```
