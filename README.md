@@ -31,6 +31,9 @@ To show the Objects before uploading to MISP, use --dryrun:
 This file contains column headers for ALL objects in the 2.4.103 release of MISP
 To generate a CSV file of the updated object fields use ```gen_def_csv.sh```
 
+# Custom objects + fields
+MISP allows custom objects to be created for an instance - this means that scripts (like this one) usually need a reference to be provided the object json which provides the schema for the object. To do that in this tool use the ```--custom_objects``` flag with the argument set to your custom objects directory. This can be a directory of objects much like https://github.com/MISP/misp-objects/tree/master/objects (this is how the all.csv file is created)
+
 # --help
 ```
 usage: batch_objects.py [-h] (-e (int|uuid) | -i Badstuff ...) [-d [0-4]] -c
@@ -62,4 +65,3 @@ optional arguments:
   --dryrun              Show objects before sending to MISP
   -v, --verbose         Print debug information to stderr
 ```
-
