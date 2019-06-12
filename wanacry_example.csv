@@ -1,4 +1,5 @@
-"object","comment","md5","fullpath__1","fullpath__2","fullpath__3","filename","filename__2","filename__3","ssdeep","ip","domain","url","method","name"
-"file","WanaCry","42af62942e8f576bdd52a46c669de9c1","WINDOWS\tasksche.exe","WINDOWS\qeriuwjhrf","WINDOWS\mssecsvr.exe","tasksche.exe","qeriuwjhrf","mssecsvr.exe","24576:QbLguri2QhfdmMSirYbcMNgef0QeQjG/D3k:Qn3QqMSPbcBVQej/",,,,,
-"domain-ip","Key request",,,,,,,,,"72.5.65.99","www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwff.com",,,
-"http-request",,,,,,,,,,"72.5.65.99",,"http://www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwff.com/","GET",
+object,comment,ip,domain,url,method,md5,sha1,fullpath__1,fullpath__2,filename,filename__2,ssdeep
+file,WanaCry dropper,,,,,42af62942e8f576bdd52a46c669de9c1,,WINDOWS\tasksche.exe,WINDOWS\qeriuwjhrf,tasksche.exe,qeriuwjhrf,24576:QbLguri2QhfdmMSirYbcMNgef0QeQjG/D3k:Qn3QqMSPbcBVQej/
+file,WanaCry dropper,,,,,11bb6af9ffed30aaedcdaaeab40333d2,d468aabbb0d8a24fb6192c743a3e5e2c82dbe2b8,WINDOWS\tasksche.exe,WINDOWS\qeriuwjhrf,tasksche.exe,qeriuwjhrf,12288:nti2QhMbaIMu7L5NVErCA4z2g6rTcbckPU82900Ve7zw+K+DHeQYSUjEXFGeXE38:ti2QhfdmMSirYbcMNgef0QeQjG/D3k
+domain-ip,Key request,72.5.65.99,www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwff.com,,,,,,,,,
+http-request,,72.5.65.99,,http://www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwff.com/,GET,,,,,,,

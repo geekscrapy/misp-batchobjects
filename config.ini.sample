@@ -1,0 +1,31 @@
+[MISP]
+url = https://misp.local
+key = XXX
+validate_cert = yes
+custom_objects_path = 
+default_distribution = 0 ; For new events
+
+[OBJECT_META]
+    ;; If the field is not defined below, use the following
+    ; [file]
+    ;     [md5]
+    ;         to_ids = yes
+    ;         correlation = yes
+    ;     [sha1]
+    ;         to_ids = yes
+    ;         correlation = yes
+    ;     [fullpath]
+    ;         to_ids = yes
+    ;         correlation = yes
+    ; [domain-ip]
+    ;     [domain]
+    ;         to_ids = yes
+    ;         correlation = yes
+    ;     [ip]
+    ;         to_ids = yes
+    ;         correlation = yes
+
+[CSV_READER]
+delimiter = ,
+strict_csv_parsing = yes
+quote_character = "
