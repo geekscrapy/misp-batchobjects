@@ -9,6 +9,7 @@ Objects and their fields are defined within CSV files and provided to the script
 * If the object allows it, multiple fields of the same type can be added by appending __1, __2, __3 etc. to the column header. The script strips these suffixes and adds these Attributes individually
 * Fields can be in any order
 * If the field name is the same across Objects, just use the same column
+* Lines maybe prefixed with '#' to comment out/ignore the line
 
 A file object example:
 ```
@@ -23,7 +24,7 @@ Multiple objects can be included in the same CSV:
 "http-request",,,,,,,,,,"72.5.65.99",,"http://www.iuqerfsodp9ifjaposdfjhgosurijfaewrwergwff.com/","GET",
 ```
 
-To show the Objects before uploading to MISP, use --dryrun:
+To show the Objects before uploading to MISP, use ```--dryrun```:
 
 ```python batch_objects.py --dryrun -c wanacry_example.csv -i "WanaCry Example"```
 
@@ -36,32 +37,42 @@ MISP allows custom objects to be created for an instance - this means that scrip
 
 # --help
 ```
-usage: batch_objects.py [-h] (-e (int|uuid) | -i Badstuff ...) [-d [0-4]] -c
-                        /path/to/file.csv [/path/to/file.csv ...]
-                        [--delim ","] [--quotechar "'"] [--strictcsv]
-                        [--custom_objects /path/to/objects/dir/] [--dryrun]
-                        [-v]
+usage: batch_objects.py [-h] [--misp_url "http://misp.local"]
+                        [--misp_key <API_KEY>] [--misp_validate_cert]
+                        [--custom_objects /path/to/objects/dir/] [--delim ","]
+                        [--quotechar "'"] [--strictcsv] [--dryrun] [-v]
+                        (-e (int|uuid) | -i "Title for new event" ...)
+                        [--dist [0-4]] -c /path/to/file.csv
+                        [/path/to/file.csv ...]
 
 Upload a CSV of OBJECTS to an EVENT
 
 optional arguments:
   -h, --help            show this help message and exit
-  -e (int|uuid), --event (int|uuid)
-                        EVENT to add the objects to.
-  -i Badstuff ..., --info Badstuff ...
-                        Info field if a new event is to be created
-  -d [0-4], --distribution [0-4]
-                        Distribution level for object attributes - default is
-                        Inherit (level 5) - if distribution is set in CSV that
-                        overrides this value
-  -c /path/to/file.csv [/path/to/file.csv ...], --csv /path/to/file.csv [/path/to/file.csv ...]
-                        CSV to create the objects from
+  --misp_url "http://misp.local"
+                        MISP URL (overrides conf.ini)
+  --misp_key <API_KEY>  MISP API key (overrides conf.ini)
+  --misp_validate_cert  Validate MISP SSL certificate (overrides conf.ini)
+  --custom_objects /path/to/objects/dir/
+                        If using custom objects, provide the path to the
+                        object json (overrides conf.ini)
   --delim ","           CSV delimiter
   --quotechar "'"       CSV quote character
   --strictcsv           Strict loading of the CSV
-  --custom_objects /path/to/objects/dir/
-                        If using custom objects provide the path to the
-                        objects
   --dryrun              Show objects before sending to MISP
   -v, --verbose         Print debug information to stderr
+  -e (int|uuid), --event (int|uuid)
+                        EVENT to add the objects to.
+  -i "Title for new event" ..., --info "Title for new event" ...
+                        Info field if a new event is to be created
+  --dist [0-4], --distribution [0-4]
+                        Event distribution level - New events ONLY (--info)
+                        (overrides conf.ini)
+  -c /path/to/file.csv [/path/to/file.csv ...], --csv /path/to/file.csv [/path/to/file.csv ...]
+                        CSV to create the objects from
 ```
+
+## TODO:
+* Add a mechanism to add to_ids and correlate
+* Add mechanism to add relations between objects
+* Load Excel files

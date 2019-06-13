@@ -7,12 +7,12 @@ if [[ "$csvfile" == "" ]]; then
 fi
 csvfile=$(realpath $csvfile)
 
-read -p "MISP objects path: [blank for none]: " mpath
+read -p "MISP 'objects' path (.../git/misp-objects/objects): [blank for none]: " mpath
 if [[ "$mpath" != "" ]]; then
-    cd $mpath; jq -r '[ .attributes | to_entries[] | .key]' $(find -name *.json) | jq -s add | jq -r ' . | map(select(. != "comment")) | sort | unique | ["object","comment"] + . | @csv' > $csvfile
+    cd $mpath; jq -r '[ .attributes | to_entries[] | .key]' $(find -name *.json) | jq -s add | jq -r ' . | map(select(. != "comment")) | sort | unique | ["object","object_comment","object_distribution"] + . | @csv' > $csvfile
 fi
 
-read -p "Custom objects path: [blank for none]: " cpath
+read -p "Custom 'objects' path: [blank for none]: " cpath
 if [[ "$cpath" != "" ]]; then
     cd $cpath; jq -r '[ .attributes | to_entries[] | .key]' $(find -name *.json) | jq -s add | jq -r ' . | map(select(. != "comment")) | sort | unique | @csv' >> $csvfile
 fi

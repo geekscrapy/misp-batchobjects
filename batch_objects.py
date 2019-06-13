@@ -1,14 +1,6 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-"""
-TODO:
-* Add a mechanism to add to_ids and correlate
-* Add mechanism to add relations between objects
-* Add option to export the new Event as JSON --dryrun
-* Load Excel files
-"""
-
 import csv
 import argparse, logging, sys, os, configparser
 import pprint
@@ -42,21 +34,42 @@ def get_object_fields(csv_path, delim, quotechar, strictcsv):
             strict=strictcsv
         )
 
-        for row in objects_file:
-            if row['object'] == '' or row['object'].startswith('#'):
+        for i, row in enumerate(objects_file, 1): # Start from 1 as header is consumed by DictReader already
+            # # Ignore lines with comments, as their own column (as per the templates), or prefixed to object column
+            if row['object'] == '':
+                log.debug('Ignoring row "{}", no object given!'.format(i))
                 continue
+            elif row['object'].startswith('#'):
+                log.debug('Ignoring row "{}", commented out!'.format(i))
+                continue
+            try:
+                if row['#'].startswith('#'):
+                    log.debug('Ignoring row "{}", commented out!'.format(i))
+                    continue
+            except: pass
+            try:
+                if row[''].startswith('#'):
+                    log.debug('Ignoring row "{}", commented out!'.format(i))
+                    continue
+            except: pass
 
             obj = {
                 'data': []
             }
 
             for field, value in row.items():
+                # # Ignore templates defaults of "-"
+                if value == '-':
+                    continue
+
                 if field == 'object':
                     obj['object'] = value.lower()
-                elif field == 'distribution':
-                    obj['distribution'] = value
-                elif field == 'comment':
-                    obj['comment'] = value
+                elif field == 'object_distribution' and value:
+                    # # Dist should always be a number
+                    try: obj['object_distribution'] = int(value)
+                    except: pass
+                elif field == 'object_comment' and value:
+                    obj['object_comment'] = value
                 elif value:
                     field = str(field.split('__')[0].lower())
                     obj['data'].append({field:value})
@@ -117,6 +130,9 @@ if __name__ == '__main__':
 
     # # Load objects from the CSV file
     objects = get_object_fields(args.csv, args.delim, args.quotechar, args.strictcsv)
+    if len(objects) == 0:
+        log.critical('No Objects to create! Are they commented out? Run with --verbose (-v) to see what\'s happening!')
+        exit(1)
 
     # # Create a new Event
     if args.info:
@@ -147,11 +163,9 @@ if __name__ == '__main__':
             exit(1)
 
         # # Add distribution if it has been set
-        if o.get('distribution'):
-            misp_object.distribution = o.get('distribution')
+        if o.get('object_distribution'): misp_object.distribution = o.get('object_distribution')
         # # Add comment to object if it has been set
-        if o.get('comment'):
-            misp_object.comment = o.get('comment')
+        if o.get('object_comment'): misp_object.comment = o.get('object_comment')
 
         # # Just print the object if --dryrun has been used
         log.info('Processing object: {}'.format(misp_object.to_json()))
