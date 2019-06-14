@@ -1,10 +1,16 @@
-[MISP]
-url = https://misp.local
-key = XXXXXXXXXXXXX
-validate_cert = yes
-custom_objects_path = 
-default_distribution = 5 ; For new events
+;; Uses the configparser library in Py3
 
+;; General MISP settings
+[MISP]
+url = https://misp.local ; URL of your MISP instance
+key = XXXXXXXXXXXXX      ; API key for your user
+validate_cert = yes      ; Validate the SSL certificate of the instance (recommended!)
+custom_objects_path =    ; If the MISP instance uses custom objects, and you intend to
+                         ;; use them to create objects using this tool, the path to the JSON
+                         ;; schema needs to be given here. If you dotn use custom objects, dont worry!
+default_distribution = 5 ; For new events when using the --info argument
+
+;; Ovveride a MISP default setting when adding new Attributes
 ;; If the field is not defined below, it'll use the MISP default
 ;; Fields below are set as general MISP Attribute fields: https://pymisp.readthedocs.io/_modules/pymisp/mispevent.html#MISPAttribute.from_dict
 [OBJECT_META]
@@ -31,6 +37,7 @@ http-request.method.to_ids = yes
 http-request.method.disable_correlation = no
 ;; Add your own here!
 
+;; Customise the CSV parsing
 [CSV_READER]
 delimiter = ,
 strict_csv_parsing = yes
