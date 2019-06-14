@@ -8,7 +8,7 @@ validate_cert = yes      ; Validate the SSL certificate of the instance (recomme
 custom_objects_path =    ; If the MISP instance uses custom objects, and you intend to
                          ;; use them to create objects using this tool, the path to the JSON
                          ;; schema needs to be given here. If you don't use custom objects, don't worry!
-default_distribution = 5 ; For new events when using the --info argument
+default_distribution = 0 ; For new events when using the --info argument | Distribution level(s) (0,1,2,3)
 
 ;; Override a MISP default setting when adding new Attributes
 ;; If the field is not defined below, it'll use the MISP default

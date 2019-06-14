@@ -67,16 +67,16 @@ def get_object_fields(csv_path, delim, quotechar, strictcsv):
             if row['object'] == '':
                 log.debug('Ignoring row "{}", no object given!'.format(i))
                 continue
-            elif row['object'].startswith('#'):
+            elif row['object'].strip().startswith('#'):
                 log.debug('Ignoring row "{}", commented out!'.format(i))
                 continue
             try:
-                if row['#'].startswith('#'):
+                if row['#'].strip().startswith('#'):
                     log.debug('Ignoring row "{}", commented out!'.format(i))
                     continue
             except: pass
             try:
-                if row[''].startswith('#'):
+                if row[''].strip().startswith('#'):
                     log.debug('Ignoring row "{}", commented out!'.format(i))
                     continue
             except: pass
@@ -86,22 +86,25 @@ def get_object_fields(csv_path, delim, quotechar, strictcsv):
                 'attributes': []
             }
      
+            
             # # Mandatory Object name field!
             try:
-                raw_obj['object'] = row.pop('object').lower()
+                raw_obj['object'] = row.pop('object').lower().strip()
             except Exception as e:
                 log.critical('No "object" column defined in CSV!' + str(e))
                 exit(1)
             # # Distribution should always be a number
-            try: raw_obj['object_distribution'] = int(row.pop('object_distribution'))
+            try: raw_obj['object_distribution'] = int(row.pop('object_distribution').strip())
             except: pass
             # # Get object comment
-            try: raw_obj['object_comment'] = int(row.pop('object_comment'))
+            try: raw_obj['object_comment'] = int(row.pop('object_comment').strip())
             except: pass
 
             for field, value in row.items():
-                # # Ignore templates defaults of "-"
-                if value == '-':
+                field, value = field.strip(), value.strip()
+
+                # # Ignore templates which use "-", or blank fields
+                if value == '-' or field == '' or value == '': # # Sometimes people leave blank columns... AH
                     continue
                 # # Other object fields
                 elif value:
@@ -182,7 +185,7 @@ if __name__ == '__main__':
             new_event = pymisp.add_event(event)
 
             if 'errors' in new_event.keys():
-                log.critical('Error creating the new event. Error: {}'.format('; '.join(new_event['errors'])))
+                log.critical('Error creating the new event. {}'.format(new_event['errors'][2]))
                 exit(1)
 
             # # Get the ID of the new event for later
@@ -206,11 +209,15 @@ if __name__ == '__main__':
         except: pass
 
         # # Just print the object if --dryrun has been used
-        log.debug('Adding object ({}): {}'.format(o['object'], misp_object.to_json()))
-        log.info('Adding object {} - {}'.format(i, o['object']))
         if args.dryrun:
+            log.info('Adding object ({}): {}'.format(o['object'], misp_object.to_json()))
             continue
         else:
+
+            if not log.level == logging.DEBUG:
+                log.info('Adding object {} - {}'.format(i, o['object']))
+            else:
+                log.info('Adding object ({}): {}'.format(o['object'], misp_object.to_json()))
 
             try:
                 template_ids = [x['ObjectTemplate']['id'] for x in template if x['ObjectTemplate']['name'] == o['object']]
@@ -230,4 +237,5 @@ if __name__ == '__main__':
                 log.critical(response['errors'])
                 exit(1)
 
-    log.info('Event: {}/events/view/{}'.format(args.misp_url, args.event))
+    if not args.dryrun:
+        log.info('Event: {}/events/view/{}'.format(args.misp_url, args.event))
