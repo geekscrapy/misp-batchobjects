@@ -1,29 +1,35 @@
 [MISP]
 url = https://misp.local
-key = XXX
+key = XXXXXXXXXXXXX
 validate_cert = yes
 custom_objects_path = 
-default_distribution = 0 ; For new events
+default_distribution = 5 ; For new events
 
+;; If the field is not defined below, it'll use the MISP default
+;; Fields below are set as general MISP Attribute fields: https://pymisp.readthedocs.io/_modules/pymisp/mispevent.html#MISPAttribute.from_dict
 [OBJECT_META]
-    ;; If the field is not defined below, use the following
-    ; [file]
-    ;     [md5]
-    ;         to_ids = yes
-    ;         correlation = yes
-    ;     [sha1]
-    ;         to_ids = yes
-    ;         correlation = yes
-    ;     [fullpath]
-    ;         to_ids = yes
-    ;         correlation = yes
-    ; [domain-ip]
-    ;     [domain]
-    ;         to_ids = yes
-    ;         correlation = yes
-    ;     [ip]
-    ;         to_ids = yes
-    ;         correlation = yes
+
+; Syntax:
+; object_name.field_name.attribute_option = [yes/no] / [123.../abc...] / etc.
+
+file.md5.to_ids = yes
+file.md5.disable_correlation = no
+
+file.filename.to_ids = yes
+file.filename.disable_correlation = no
+
+file.sha1.to_ids = yes
+file.sha1.disable_correlation = no
+
+file.fullpath.to_ids = yes
+file.fullpath.disable_correlation = no
+
+domain-ip.domain.to_ids = yes
+domain-ip.domain.disable_correlation = no
+
+http-request.method.to_ids = yes
+http-request.method.disable_correlation = no
+;; Add your own here!
 
 [CSV_READER]
 delimiter = ,

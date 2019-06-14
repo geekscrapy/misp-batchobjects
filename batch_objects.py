@@ -18,10 +18,38 @@ try:
 except Exception as e:
     print('Error loading {}, copy the config.ini.sample: {}'.format(config_path, e))
     exit(1)
+config.BOOLEAN_STATES = {'yes': True, 'no': False}
 
 from pymisp import PyMISP, MISPEvent
 from pymisp.tools import GenericObjectGenerator
 from pymisp.exceptions import NewAttributeError
+
+def get_object_meta(object_name, field):
+    try:
+        object_meta = config['OBJECT_META']
+    except:
+        log.warning('No OBJECT_META section found in config.ini - using MISP defaults')
+        return {}
+
+    user_defs = {}
+
+    for key in object_meta.keys():
+        o_object_name, o_field, o_option = key.split('.')
+
+        if o_object_name != object_name or o_field != field:
+            continue
+
+        try: value = object_meta.getboolean(key)
+        except:
+            try: value = object_meta.getint(key)
+            except:
+                try: value = object_meta.getfloat(key)
+                except:
+                    value = object_meta.get(key)
+
+        user_defs[o_option] = value
+
+    return(user_defs)
 
 def get_object_fields(csv_path, delim, quotechar, strictcsv):
 
@@ -53,28 +81,36 @@ def get_object_fields(csv_path, delim, quotechar, strictcsv):
                     continue
             except: pass
 
-            obj = {
-                'data': []
+            raw_obj = {
+                'object': None,
+                'attributes': []
             }
+     
+            # # Mandatory Object name field!
+            try:
+                raw_obj['object'] = row.pop('object').lower()
+            except Exception as e:
+                log.critical('No "object" column defined in CSV!' + str(e))
+                exit(1)
+            # # Distribution should always be a number
+            try: raw_obj['object_distribution'] = int(row.pop('object_distribution'))
+            except: pass
+            # # Get object comment
+            try: raw_obj['object_comment'] = int(row.pop('object_comment'))
+            except: pass
 
             for field, value in row.items():
                 # # Ignore templates defaults of "-"
                 if value == '-':
                     continue
-
-                if field == 'object':
-                    obj['object'] = value.lower()
-                elif field == 'object_distribution' and value:
-                    # # Dist should always be a number
-                    try: obj['object_distribution'] = int(value)
-                    except: pass
-                elif field == 'object_comment' and value:
-                    obj['object_comment'] = value
+                # # Other object fields
                 elif value:
-                    field = str(field.split('__')[0].lower())
-                    obj['data'].append({field:value})
-    
-            objects.append(obj)
+                    field_str = str(field.split('__')[0].lower()) # Allow for duplicate field names
+                    field_meta = get_object_meta(raw_obj['object'] , field_str)
+                    field_data = { **{'value':value}, **field_meta}
+                    raw_obj['attributes'].append({field_str: field_data})
+
+            objects.append(raw_obj)
 
     return objects
 
@@ -154,21 +190,24 @@ if __name__ == '__main__':
             log.info('New event created: {}'.format(args.event))
 
     # # Add Objects to existing Event
-    for o in objects:
+    for i, o in enumerate(objects, 1):
         misp_object = GenericObjectGenerator(o['object'],  misp_objects_path_custom=args.custom_objects_path)
         try:
-            misp_object.generate_attributes(o['data'])
+            misp_object.generate_attributes(o['attributes'])
         except NewAttributeError as e:
             log.critical('Error creating attributes, often this is due to custom objects being used. Error: {}'.format(e))
             exit(1)
 
         # # Add distribution if it has been set
-        if o.get('object_distribution'): misp_object.distribution = o.get('object_distribution')
+        try: misp_object.distribution = o.get('object_distribution')
+        except: pass
         # # Add comment to object if it has been set
-        if o.get('object_comment'): misp_object.comment = o.get('object_comment')
+        try: misp_object.comment = o.get('object_comment')
+        except: pass
 
         # # Just print the object if --dryrun has been used
-        log.info('Processing object: {}'.format(misp_object.to_json()))
+        log.debug('Adding object ({}): {}'.format(o['object'], misp_object.to_json()))
+        log.info('Adding object {} - {}'.format(i, o['object']))
         if args.dryrun:
             continue
         else:
@@ -191,4 +230,4 @@ if __name__ == '__main__':
                 log.critical(response['errors'])
                 exit(1)
 
-    # print('Event: {}/events/view/{}'.format(secrets.misp_url, response['response']['Event']['id']))
+    log.info('Event: {}/events/view/{}'.format(args.misp_url, args.event))
