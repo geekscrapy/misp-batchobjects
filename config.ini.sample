@@ -7,10 +7,10 @@ key = XXXXXXXXXXXXX      ; API key for your user
 validate_cert = yes      ; Validate the SSL certificate of the instance (recommended!)
 custom_objects_path =    ; If the MISP instance uses custom objects, and you intend to
                          ;; use them to create objects using this tool, the path to the JSON
-                         ;; schema needs to be given here. If you dotn use custom objects, dont worry!
+                         ;; schema needs to be given here. If you don't use custom objects, don't worry!
 default_distribution = 5 ; For new events when using the --info argument
 
-;; Ovveride a MISP default setting when adding new Attributes
+;; Override a MISP default setting when adding new Attributes
 ;; If the field is not defined below, it'll use the MISP default
 ;; Fields below are set as general MISP Attribute fields: https://pymisp.readthedocs.io/_modules/pymisp/mispevent.html#MISPAttribute.from_dict
 [OBJECT_META]

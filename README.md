@@ -73,6 +73,5 @@ optional arguments:
 ```
 
 ## TODO:
-* Add a mechanism to add to_ids and correlate
 * Add mechanism to add relations between objects
 * Load Excel files
